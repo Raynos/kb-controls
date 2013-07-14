@@ -19,10 +19,9 @@
   "author": "Chris Dickinson <chris@neversaw.us>",
   "license": "MIT",
   "dependencies": {
-    "vkey": "X.X.X",
-    "ever": "X.X.X"
-  },
-  "devDependencies": {
-    "raf": "0.0.1"
+    "vkey": "~0.0.2",
+    "ever": "~0.0.3",
+    "raf": "0.0.3",
+    "global": "~2.0.7"
   }
 }

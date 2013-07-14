@@ -1,19 +1,25 @@
 var ever = require('ever')
   , vkey = require('vkey')
+  , document = require('global/document')
+  , raf = require('raf').polyfill
   , max = Math.max
 
-module.exports = function(el, bindings, state) {
+module.exports = function(el, bindings, opts) {
   if(bindings === undefined || !el.ownerDocument) {
-    state = bindings
+    opts = bindings
     bindings = el
-    el = this.document.body
+    el = document.body
+  }
+
+  opts = opts || {}
+  if (typeof opts === 'function') {
+    opts = { listener: opts }
   }
 
   var ee = ever(el)
     , measured = {}
     , enabled = true
-
-  state = state || {}
+    , state = opts.state || {}
 
   // always initialize the state.
   for(var key in bindings) {
@@ -40,7 +46,15 @@ module.exports = function(el, bindings, state) {
   state.disable = enable_disable(false)
   state.destroy = function() {
     ee.removeAllListeners()
-  } 
+  }
+
+  if (opts.listener) {
+    raf(function loop() {
+      opts.listener()
+      raf(loop)
+    })
+  }
+
   return state
 
   function clear() {
