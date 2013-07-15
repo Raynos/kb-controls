@@ -2,6 +2,8 @@ var ever = require('ever')
   , vkey = require('vkey')
   , document = require('global/document')
   , raf = require('raf').polyfill
+  , xtend = require('xtend/mutable')
+  , EventEmitter = require('events').EventEmitter
   , max = Math.max
 
 module.exports = function(el, bindings, opts) {
@@ -19,7 +21,11 @@ module.exports = function(el, bindings, opts) {
   var ee = ever(el)
     , measured = {}
     , enabled = true
-    , state = opts.state || {}
+    , state = new EventEmitter()
+
+  if (opts.state) {
+    xtend(state, opts.state)
+  }
 
   // always initialize the state.
   for(var key in bindings) {
@@ -93,6 +99,9 @@ module.exports = function(el, bindings, opts) {
 
         if(!on_or_off && state[binding] < 0) {
           state[binding] = 0
+        }
+        if (!on_or_off) {
+          state.emit(binding)
         }
       }
     }
