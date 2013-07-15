@@ -32,7 +32,12 @@ module.exports = function(el, bindings, opts) {
     if(bindings[key] === 'enabled' ||
        bindings[key] === 'enable' ||
        bindings[key] === 'disable' ||
-       bindings[key] === 'destroy') {
+       bindings[key] === 'destroy' ||
+       bindings[key] === 'pulse' ||
+       bindings[key] === 'on' ||
+       bindings[key] === 'emit' ||
+       bindings[key] === '_events'
+    ) {
       throw new Error(bindings[key]+' is reserved')
     }
     state[bindings[key]] = 0
@@ -55,11 +60,13 @@ module.exports = function(el, bindings, opts) {
   }
 
   if (opts.listener) {
-    raf(function loop() {
-      opts.listener()
-      raf(loop)
-    })
+    state.on('pulse', opts.listener)
   }
+
+  raf(function loop() {
+    state.emit('pulse', state)
+    raf(loop)
+  })
 
   return state
 
