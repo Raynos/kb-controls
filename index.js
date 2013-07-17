@@ -7,7 +7,7 @@ var ever = require('ever')
   , max = Math.max
 
 module.exports = function(el, bindings, opts) {
-  if(bindings === undefined || !el.ownerDocument) {
+  if(bindings === undefined || !el.addEventListener) {
     opts = bindings
     bindings = el
     el = document.body
@@ -17,7 +17,6 @@ module.exports = function(el, bindings, opts) {
   if (typeof opts === 'function') {
     opts = { listener: opts }
   }
-
   var ee = ever(el)
     , measured = {}
     , enabled = true
